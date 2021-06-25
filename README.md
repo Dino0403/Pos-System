@@ -8,4 +8,4 @@ A Pos System web for order drink use
 - can remove drink and checkout
 
 ### Demo Link
-- 
+- https://dino0403.github.io/Pos-System/
