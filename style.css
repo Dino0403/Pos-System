@@ -1,0 +1,59 @@
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url('https://cdn-b.william-reed.com/var/wrbm_gb_hospitality/storage/images/media/images/pimms_landscape/4417487-1-eng-GB/Pimms_Landscape.jpg') no-repeat center center;
+  background-size: cover;
+}
+
+.container {
+  /* outline: 1px solid steelblue; */
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 3px;
+}
+
+.container .title{
+  color: aliceblue;
+}
+
+.row {
+  /* outline: 1px solid steelblue; */
+  max-height: 600px;
+}
+
+.col-md-4{
+  overflow-y: auto;
+  max-height: 580px;
+}
+
+.col-md-4,
+.col-md-8 {
+  /* outline: 1px solid steelblue; */
+  min-height: 600px;
+}
+
+[data-pos="delete-drink"]{
+    /* outline: 1px solid steelblue; */
+    text-align: center;
+    cursor: pointer;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 1;
+    color: #999;
+  }
+
+[data-pos="delete-drink"]:hover {
+  color: #333;
+}
+
+.menu .card-body{
+  cursor: pointer;
+}
+
+.menu .card-body:hover{
+  box-shadow: 0px 0px 10px 1px rgba(255,255,255,0.8);
+}
+
