@@ -1,76 +1,75 @@
-function Drink(name, sugar, ice) {
+// Step1 : Drink Constructor Function
+function Drink(name, ice, sugar) {
   this.name = name
-  this.sugar = sugar
   this.ice = ice
+  this.sugar = sugar
 }
 
-Drink.prototype.price = function () {
+let blackTea = new Drink('Black Tea', 'Less', 'Less')
+console.log(blackTea)
+
+// Step2 : Drink Price Function
+Drink.prototype.getPrice = function () {
   switch (this.name) {
+    case 'Espresso':
+    case 'Fruit Tea':
+      return 60
+    case 'Apple Juice':
+    case 'Cocoa':
+    case 'Milk Tea':
+      return 50
+    case 'Green Tea':
     case 'Black Tea':
     case 'Oolong Tea':
-    case 'Baozong Tea':
-    case 'Green Tea':
       return 30
-    case 'Bubble Milk Tea':
-    case 'Lemon Green Tea':
-      return 50
-    case 'Black Tea Latte':
-    case 'Matcha Latte':
-      return 55
-    default:
-      alert('No this drink')
   }
 }
 
-let blackTea = new Drink('Black Tea', 'Half Sugar', 'No Ice')
-console.log(blackTea)
-console.log(blackTea.price())
-
-let lemonGreenTea = new Drink('Lemon Green Tea', 'No Sugar', 'Less Ice')
-console.log(lemonGreenTea)
-console.log(lemonGreenTea.price())
-
-let matchaLatte = new Drink('Matcha Latte', 'Less Sugar', 'Regular Ice')
-console.log(matchaLatte)
-console.log(matchaLatte.price())
-
-
-// PosSystem Constructor Fuction
+// Stpe3 : POS SYSTEM Constructor Function
 function PosSystem() { }
-PosSystem.prototype.getCheckValue = function (inputName) {
-  let selectedOption = ''
-  document.querySelectorAll(`[name=${inputName}]`).forEach((item) => {
+const pos = new PosSystem()
+
+// Step5 : get checked drink info
+PosSystem.prototype.checkedValue = function (input) {
+  let value = ''
+  const items = document.querySelectorAll(`[name="${input}"]`)
+  items.forEach(item => {
     if (item.checked) {
-      selectedOption = item.value
+      value = item.value
     }
   })
-  return selectedOption
+  return value
 }
 
+// Step6 : add card to html Function
 const orderLists = document.querySelector('[data-order-lists]')
-PosSystem.prototype.addDrink = function (drink) {
-  let orderItemHTML = `
+PosSystem.prototype.addCard = function (drink) {
+  let htmlContent = `
     <div class="card mb-3">
-      <div class="card-body pt-3 pr-3">
-        <div class="text-right">
-          <span data-pos="delete-drink">×</span>
-        </div>
-        <h6 class="card-title mb-1">${drink.name}</h6>
-        <div class="card-text">${drink.ice}</div>
-        <div class="card-text">${drink.sugar}</div>
+      <div class="text-right p-2 corss">
+        <i class="far fa-times-circle" data-pos="delete"></i>
       </div>
-      <div class="card-footer text-right py-2">
-        <div class="card-text text-muted">$ <span data-drink-price>${drink.price()}</span></div>
+      <div class="card-body text-center">
+        <i class="fas fa-coffee"></i>
+        <h5 class="card-title mt-3">${drink.name}</h5>
+        <span class="card-text item">${drink.ice}</span>
+        <span class="card-text item">${drink.sugar}</span>
+      </div>
+      <div class="card-footer text-muted text-right">
+        <i class="fas fa-dollar-sign"></i><span data-drink-price>${drink.getPrice()}</span>
       </div>
     </div>
   `
-  orderLists.insertAdjacentHTML('afterbegin', orderItemHTML)
+  orderLists.insertAdjacentHTML('afterbegin', htmlContent)
 }
 
-PosSystem.prototype.deleteDrink = function (target) {
+// Step7 : remove card Function
+PosSystem.prototype.delete = function (target) {
   target.remove()
 }
 
+// Step8 : checkout Function
+const checkoutButton = document.querySelector('[data-pos="checkout"]')
 PosSystem.prototype.checkout = function () {
   let totalAmount = 0
   document.querySelectorAll('[data-drink-price]').forEach(item => {
@@ -79,71 +78,69 @@ PosSystem.prototype.checkout = function () {
   return totalAmount
 }
 
-
-PosSystem.prototype.clearOrder = function (target) {
-  target.querySelectorAll('.card').forEach(card => card.remove())
+// Step9 : clear Function
+PosSystem.prototype.clearCard = function (target) {
+  target.querySelectorAll('.card').forEach(item => {
+    item.remove()
+  })
 }
-// new the pos Instance
-const pos = new PosSystem()
 
-const addDrinkButton = document.querySelector('[data-pos="add-drink"]')
-addDrinkButton.addEventListener('click', function () {
-  // 1. 取得店員選擇的飲料品項、甜度和冰塊
-  const drinkName = pos.getCheckValue('drink')
-  const ice = pos.getCheckValue('ice')
-  const sugar = pos.getCheckValue('sugar')
+
+// Stpe4 : Get add drink info
+const addButton = document.querySelector('[data-add]')
+addButton.addEventListener('click', function () {
+  // 取得飲料資訊
+  const drinkName = pos.checkedValue('drink')
+  const ice = pos.checkedValue('ice')
+  const sugar = pos.checkedValue('sugar')
   console.log(drinkName, ice, sugar)
-  // 2. 如果沒有選擇飲料品項，跳出提示
+  // 如沒有選擇飲料 跳出提示
   if (!drinkName) {
-    alert('Please choose at least one item')
+    alert('Please choose drink')
     return
   }
-  // 3. 建立飲料實例，並取得飲料價格
+  // 建立飲料實例
   const drink = new Drink(drinkName, ice, sugar)
   console.log(drink)
-  console.log(drink.price())
-  // 4. 將飲料實例產生成左側訂單區的畫面
-  pos.addDrink(drink)
+  // 產生飲料卡片
+  pos.addCard(drink)
 })
 
-// remove list
+// Step7 : remove card
 orderLists.addEventListener('click', function (event) {
-  let isDeleteButton = event.target.matches('[data-pos="delete-drink"]')
-  if (!isDeleteButton) {
-    return
+  const target = event.target
+  const deleteTarget = target.parentElement.parentElement
+  if (target.matches('[data-pos="delete"]')) {
+    pos.delete(deleteTarget)
   }
-  pos.deleteDrink(event.target.parentElement.parentElement.parentElement)
 })
 
-// checkout
-document.querySelectorAll('[data-drink-price]')
 
-const checkoutButton = document.querySelector('[data-pos="checkout"]')
+// checkout and clear card
 checkoutButton.addEventListener('click', function () {
-  // 1. 計算訂單總金額
   alert(`Total amount of drinks：$${pos.checkout()}`)
-  // 2. 清空訂單
-  pos.clearOrder(orderLists)
+  pos.clearCard(orderLists)
 })
 
 
-/*
-  let allDrinkOpions = document.querySelectorAll('[name="drink"]')
-  allDrinkOpions.forEach(function (option) {
-    if (option.checked) {
-      console.log(`${option.value} : ${option.checked}`)
-    }
-  })
-  let allIceOptions = document.querySelectorAll('[name="ice"]')
-  allIceOptions.forEach(function (option) {
-    if (option.checked) {
-      console.log(`${option.value} : ${option.checked}`)
-    }
-  })
-  let allSugarOption = document.querySelectorAll('[name="sugar"]')
-  allSugarOption.forEach(function (option) {
-    if (option.checked) {
-      console.log(`${option.value} : ${option.checked}`)
-    }
-  })
+/**
+    const drinks = document.querySelectorAll('[name="drink"]')
+    drinks.forEach(drink => {
+      if (drink.checked) {
+        console.log(drink.value)
+      }
+    })
+    const ice = document.querySelectorAll('[name="ice"]')
+    ice.forEach(item => {
+      if (item.checked) {
+        console.log(item.value)
+      }
+    })
+    const sugar = document.querySelectorAll('[name="sugar"]')
+    sugar.forEach(item => {
+      if (item.checked) {
+        console.log(item.value)
+      }
+    })
+    console.log(drinks, ice, sugar)
 */
